@@ -15,6 +15,7 @@ import android.os.BatteryManager
 import android.os.Build
 import android.provider.AlarmClock
 import android.provider.ContactsContract
+import android.provider.ContactsContract.CommonDataKinds.Phone
 import android.provider.MediaStore
 import android.provider.Settings
 import android.telecom.TelecomManager
@@ -417,15 +418,14 @@ class Actions(private val ctx: Context) {
 
     private fun loadContacts(): List<Contact> {
         if (!granted(Manifest.permission.READ_CONTACTS)) return emptyList()
-        val P = ContactsContract.CommonDataKinds.Phone
         val map = LinkedHashMap<String, Pair<String, Int>>()
-        ctx.contentResolver.query(P.CONTENT_URI, arrayOf(P.DISPLAY_NAME, P.NUMBER, P.TYPE), null, null, null)?.use { c ->
+        ctx.contentResolver.query(Phone.CONTENT_URI, arrayOf(Phone.DISPLAY_NAME, Phone.NUMBER, Phone.TYPE), null, null, null)?.use { c ->
             while (c.moveToNext()) {
                 val n = c.getString(0) ?: continue
                 val num = c.getString(1) ?: continue
                 val type = c.getInt(2)
                 val prev = map[n]
-                if (prev == null || (type == P.TYPE_MOBILE && prev.second != P.TYPE_MOBILE)) map[n] = Pair(num, type)
+                if (prev == null || (type == Phone.TYPE_MOBILE && prev.second != Phone.TYPE_MOBILE)) map[n] = Pair(num, type)
             }
         }
         return map.map { Contact(it.key, it.value.first) }
