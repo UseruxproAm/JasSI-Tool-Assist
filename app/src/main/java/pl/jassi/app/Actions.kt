@@ -611,11 +611,14 @@ class Actions(private val ctx: Context) {
         return if (hit != null) "Przełączyłem: $spoken." else "Nie znalazłem „$spoken” w szybkich ustawieniach."
     }
 
-    private fun torch(on: Boolean): String = try {
-        val cm = ctx.getSystemService(CameraManager::class.java)
-        val id = cm.cameraIdList.firstOrNull { cm.getCameraCharacteristics(it).get(CameraCharacteristics.FLASH_INFO_AVAILABLE) == true }
-            ?: return "Ten telefon nie ma latarki."
-        cm.setTorchMode(id, on)
-        if (on) "Latarka włączona." else "Latarka wyłączona."
-    } catch (e: Exception) { "Nie mogę obsłużyć latarki." }
-}
+    private fun torch(on: Boolean): String {
+        return try {
+            val cm = ctx.getSystemService(CameraManager::class.java)
+            val id = cm.cameraIdList.firstOrNull { cm.getCameraCharacteristics(it).get(CameraCharacteristics.FLASH_INFO_AVAILABLE) == true }
+                ?: return "Ten telefon nie ma latarki."
+            cm.setTorchMode(id, on)
+            if (on) "Latarka włączona." else "Latarka wyłączona."
+        } catch (e: Exception) {
+            "Nie mogę obsłużyć latarki."
+        }
+    }
