@@ -622,3 +622,4 @@ class Actions(private val ctx: Context) {
             "Nie mogę obsłużyć latarki."
         }
     }
+}
